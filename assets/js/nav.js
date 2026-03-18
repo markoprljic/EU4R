@@ -86,16 +86,21 @@
     lastScroll = y;
   }, { passive: true });
 
-  /* Mark active link */
-  var currentPath = window.location.pathname.replace(/\/$/, '') || '/index.html';
+  /* Mark active link — works with both root-served and subdirectory (GitHub Pages) setups */
+  var currentHref = window.location.href.split('?')[0].split('#')[0];
   var links = document.querySelectorAll('.nav__link, .nav__menu-link');
   links.forEach(function (link) {
-    var href = link.getAttribute('href');
-    if (!href) return;
-    var linkPath = href.replace(/\/$/, '');
-    if (currentPath === linkPath || (linkPath !== '/index.html' && currentPath.startsWith(linkPath.replace('/index.html', '')))) {
+    if (!link.href) return;
+    var linkHref = link.href.split('?')[0].split('#')[0];
+    /* Strip trailing index.html for comparison */
+    var normCurrent = currentHref.replace(/\/index\.html$/, '/');
+    var normLink    = linkHref.replace(/\/index\.html$/, '/');
+    if (normCurrent === normLink) {
       link.classList.add('is-active');
       link.setAttribute('aria-current', 'page');
+    } else if (normLink !== '/' && normLink.replace(/\/$/, '') !== '' && normCurrent.startsWith(normLink.replace(/\/$/, '/'))) {
+      /* Highlight parent section link (e.g. /EU4R/news/ active on article page) */
+      link.classList.add('is-active');
     }
   });
 
