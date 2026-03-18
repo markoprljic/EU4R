@@ -14,7 +14,7 @@
 
   function getConsent() {
     try {
-      return localStorage.getItem(STORAGE_KEY);
+      return sessionStorage.getItem(STORAGE_KEY);
     } catch (e) {
       return null;
     }
@@ -22,7 +22,7 @@
 
   function setConsent(value) {
     try {
-      localStorage.setItem(STORAGE_KEY, value);
+      sessionStorage.setItem(STORAGE_KEY, value);
     } catch (e) {
       /* storage unavailable — silently continue */
     }

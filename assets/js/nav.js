@@ -86,10 +86,42 @@
     lastScroll = y;
   }, { passive: true });
 
+  /* Language switcher */
+  var langBtns  = document.querySelectorAll('.nav__lang-btn');
+  var savedLang = localStorage.getItem('eu4r-lang') || 'en';
+
+  function setLang(lang) {
+    langBtns.forEach(function (btn) {
+      var active = btn.dataset.lang === lang;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+    localStorage.setItem('eu4r-lang', lang);
+    document.documentElement.setAttribute('lang', lang === 'uk' ? 'uk' : 'en');
+  }
+
+  setLang(savedLang);
+
+  langBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setLang(btn.dataset.lang);
+    });
+  });
+
   /* Mark active link — works with both root-served and subdirectory (GitHub Pages) setups */
   var currentHref = window.location.href.split('?')[0].split('#')[0];
   var links = document.querySelectorAll('.nav__link, .nav__menu-link');
+
+  /* Base path depth — used to prevent the home link from matching every page */
+  var baseEl       = document.querySelector('base');
+  var basePath     = baseEl ? new URL(baseEl.href).pathname.replace(/\/$/, '') : '';
+  var baseDepth    = basePath.split('/').filter(Boolean).length;
+
   links.forEach(function (link) {
+    /* Always reset first so hardcoded is-active in HTML doesn't bleed across pages */
+    link.classList.remove('is-active');
+    link.removeAttribute('aria-current');
+
     if (!link.href) return;
     var linkHref = link.href.split('?')[0].split('#')[0];
     /* Strip trailing index.html for comparison */
@@ -98,9 +130,14 @@
     if (normCurrent === normLink) {
       link.classList.add('is-active');
       link.setAttribute('aria-current', 'page');
-    } else if (normLink !== '/' && normLink.replace(/\/$/, '') !== '' && normCurrent.startsWith(normLink.replace(/\/$/, '/'))) {
-      /* Highlight parent section link (e.g. /EU4R/news/ active on article page) */
-      link.classList.add('is-active');
+    } else {
+      /* Highlight parent section link (e.g. /EU4R/news/ active on a news article page).
+         Guard: only apply when the link's path goes deeper than the site root,
+         otherwise the home link (which normalises to the base path) matches everything. */
+      var linkDepth = new URL(normLink).pathname.replace(/\/$/, '').split('/').filter(Boolean).length;
+      if (linkDepth > baseDepth && normCurrent.startsWith(normLink.replace(/\/$/, '/'))) {
+        link.classList.add('is-active');
+      }
     }
   });
 

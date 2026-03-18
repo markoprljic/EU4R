@@ -1054,23 +1054,49 @@ p {
   color            : var(--color-text-white);
   border-radius    : var(--radius-lg);
   padding          : var(--space-6);
-  box-shadow       : var(--shadow-lg);
+  box-shadow       : 0 16px 48px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
   display          : flex;
   flex-direction   : column;
   gap              : var(--space-4);
   z-index          : 9999;
 }
 
+.cookie-banner[hidden] {
+  display : none;
+}
+
 .cookie-banner__text {
-  font-size   : var(--text-sm);
-  line-height : var(--lh-normal);
-  opacity     : 0.9;
+  font-size      : var(--text-sm);
+  line-height    : var(--lh-normal);
+  opacity        : 0.9;
+  padding-bottom : var(--space-4);
+}
+
+.cookie-banner__text a {
+  color                : var(--color-yellow);
+  text-decoration      : underline;
+  text-underline-offset: 2px;
+}
+
+.cookie-banner__text a:hover {
+  opacity : 0.8;
 }
 
 .cookie-banner__actions {
   display  : flex;
   gap      : var(--space-3);
   flex-wrap: wrap;
+}
+
+.cookie-banner .btn--outline {
+  color        : var(--color-text-white);
+  border-color : rgba(255, 255, 255, 0.5);
+}
+
+.cookie-banner .btn--outline:hover {
+  background-color : rgba(255, 255, 255, 0.1);
+  color            : var(--color-text-white);
+  border-color     : var(--color-text-white);
 }
 
 
